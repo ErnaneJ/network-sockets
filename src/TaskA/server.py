@@ -51,7 +51,7 @@ class FileTransferServer:
         args = command.split()
         if len(args) < 2:
           print(f"❌ Invalid command from {address}: {command}")
-          client_socket.send(b"Invalid command.\n")
+          client_socket.send(b"Error: Invalid command.\n")
           continue
 
         action, filename = args[0], args[1]
@@ -63,10 +63,9 @@ class FileTransferServer:
               data = client_socket.recv(self.BUFFER_SIZE)
               file.write(data)
             print(f"✅ File uploaded by {address}: {filename}")
-            client_socket.send(b"Upload completed successfully.\n")
           except Exception as e:
             print(f"❌ Error during upload by {address}: {e}")
-            client_socket.send(f"Error during upload: {e}\n".encode())
+            client_socket.send(f"Error: Error during upload: {e}\n".encode())
 
         elif action == "download":
           if os.path.exists(filepath):
@@ -77,13 +76,13 @@ class FileTransferServer:
               print(f"✅ File downloaded by {address}: {filename}")
             except Exception as e:
               print(f"❌ Error during download by {address}: {e}")
-              client_socket.send(f"Error during download: {e}\n".encode())
+              client_socket.send(f"Error: Error during download: {e}\n".encode())
           else:
             print(f"❌ File not found on server by {address}: {filename}")
-            client_socket.send(b"File not found on server.\n")
+            client_socket.send(b"Error: File not found on server.\n")
         else:
           print(f"❌ Unknown command from {address}: {command}")
-          client_socket.send(b"Unknown command.\n")
+          client_socket.send(b"Error: Unknown command.\n")
     except Exception as e:
       print(f"❌ Error with client {address}: {e}")
     finally:
@@ -96,8 +95,7 @@ class FileTransferServer:
     """
     while True:
       client_socket, address = self.server_socket.accept()
-      client_thread = self.handle_client(client_socket, address)
-      client_thread.start()
+      self.handle_client(client_socket, address)
 
 if __name__ == "__main__":
   server = FileTransferServer()

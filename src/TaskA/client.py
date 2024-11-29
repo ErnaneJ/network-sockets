@@ -79,7 +79,7 @@ class FileTransferClient:
     try:
       self.client_socket.send(f"download {filename}".encode())
       response = self.client_socket.recv(self.BUFFER_SIZE)
-      if response.startswith(b"Error") or response.startswith(b"File"):
+      if response.startswith(b"Error"):
         print(f".:: ❌ Server error: {response.decode()}")
       else:
         filepath = os.path.join(self.CLIENT_FILES_DIR, filename)
